@@ -1,4 +1,4 @@
-import { pool } from "../db/database";
+import { pool } from "../db/database.js";
 
 export const cartController = async (req,res)=>{
     const userId = req.session.user.id;
