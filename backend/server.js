@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 8000
 
 const server = express()
 server.use(cors({
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:3000.liara.run',
     credentials:true
 }))
 server.use(session({
