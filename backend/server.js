@@ -13,16 +13,18 @@ const PORT = process.env.PORT || 8000
 
 const server = express()
 server.use(cors({
-    origin: 'http://localhost:3000.liara.run',
+    origin: true,
     credentials:true
 }))
+server.set("trust proxy", 1)
+
 server.use(session({
     secret:'A VERY SECRET KEY',
     resave:false,
     saveUninitialized:false,
     cookie:{
         httpOnly:true,
-        secure:false,
+        secure:true,
         sameSite:"lax",
         maxAge: 1000 * 60 * 60 * 24 
     }
