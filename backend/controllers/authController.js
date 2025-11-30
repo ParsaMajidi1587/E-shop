@@ -2,7 +2,7 @@
 import bcrypt from 'bcryptjs'
 import crypto from 'crypto'
 import validator from 'validator'
-import { pool } from './database.js'
+import { pool } from '../database.js'
 import { sendEmailReset } from '../middleware/mail.js'
 export const authController = async (req,res)=>{
     
@@ -52,6 +52,7 @@ export const authController = async (req,res)=>{
 export const authLogin =async(req,res)=>{
     try{
     const {email,password} = req.body
+
     if(!email || !password){
         return res.status(400).json({message:"لطفا ایمیل و پسورد را وارد کنید"})
     }
