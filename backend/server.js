@@ -9,7 +9,7 @@ import { deleteRoute } from './routes/deleteRoute.js'
 import { bestsellRoute } from './routes/bestSellRoute.js'
 import { searchRoute } from './routes/searchRoute.js'
 import { cartRouter } from './routes/cartRoute.js'
-const PORT = 8000
+const PORT = process.env.PORT || 8000
 
 const server = express()
 server.use(cors({
@@ -36,4 +36,4 @@ server.use('/',authRouter)
 server.use('/',loginroute)
 server.use('/',meRouter)
 server.use('/',deleteRoute)
-server.listen(PORT , ()=>console.log(`connected to port :${PORT}`))
+server.listen(PORT ,'0.0.0.0', ()=>console.log(`server is running`))
