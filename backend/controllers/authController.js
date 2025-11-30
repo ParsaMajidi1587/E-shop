@@ -2,8 +2,9 @@
 import bcrypt from 'bcryptjs'
 import crypto from 'crypto'
 import validator from 'validator'
-import { pool } from './database.js'
+
 import { sendEmailReset } from '../middleware/mail.js'
+import { pool } from '../db/database.js'
 export const authController = async (req,res)=>{
     
     let{fullname , username , email, password} = req.body
