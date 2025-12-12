@@ -1,48 +1,56 @@
 import { pool } from "../db/database.js";
 
-export const cartController = async (req,res)=>{
-    const userId = req.session.user.id;
-    const { product_id , quantity = 1} = req.body
-     try {
-        const existing = await pool.query('SELECT * FROM cart WHERE user_id = $1 AND product_id = $2',[userId,product_id])
-        if( existing.rows.length > 0){
-            const newQuantity = existing.rows[0].quantity + quantity
-            await pool.query(
-                'UPDATE cart SET quantity = $1 , updated_at = NOW() WHERE id =$2'
-            ,[newQuantity, existing.rows[0].id])
-            return res.json({message:'سبد خرید اپدیت شد' , quantity:newQuantity})
-        }
-        await pool.query('INSERT INTO cart (user_id ,product_id,quantity)VALUES($1,$2,$3)'
-            ,[userId,product_id,quantity]
-        )
-        res.json({message:"به سبد خرید اضافه شد"})
-     } catch (error) {
-        console.log(error);
-        res.status(400).json({message:'مشکل از سرور'})
-     }
-}
+export const cartController = async (req, res) => {
+  const userId = req.session.user.id;
+  const { product_id, quantity = 1 } = req.body;
+  try {
+    const existing = await pool.query(
+      "SELECT * FROM cart WHERE user_id = $1 AND product_id = $2",
+      [userId, product_id]
+    );
+    if (existing.rows.length > 0) {
+      const newQuantity = existing.rows[0].quantity + quantity;
+      await pool.query(
+        "UPDATE cart SET quantity = $1 , updated_at = NOW() WHERE id =$2",
+        [newQuantity, existing.rows[0].id]
+      );
+      return res.json({ message: "سبد خرید اپدیت شد", quantity: newQuantity });
+    }
+    await pool.query(
+      "INSERT INTO cart (user_id ,product_id,quantity)VALUES($1,$2,$3)",
+      [userId, product_id, quantity]
+    );
+    res.json({ message: "به سبد خرید اضافه شد" });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "مشکل از سرور" });
+  }
+};
 
-export const getCartInfo=async(req,res)=>{
-    try {
-      console.log("Session In Cart:", req.session);
-           const userId = req.session.user.id
-        const result = await pool.query(`
+export const getCartInfo = async (req, res) => {
+  try {
+    console.log("Session In Cart:", req.session);
+    const userId = req.session.user.id;
+    const result = await pool.query(
+      `
             SELECT p.id ,p.title , p.price ,p.brand,p.image,
             SUM(c.quantity) as quantity
             FROM cart c
             JOIN products p ON c.product_id = p.id
             WHERE c.user_id =$1
             GROUP BY p.id, p.title, p.price, p.image, p.brand
-            `,[userId])
-        res.json(result.rows)    
-    } catch (error) {
-        console.log(error);
-        res.status(400).json({message:'مشکلی پیش امد'})
-    }
-}
+            `,
+      [userId]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "مشکلی پیش امد" });
+  }
+};
 
-export const deleteCart=async(req,res)=>{
-   try {
+export const deleteCart = async (req, res) => {
+  try {
     const userId = req.session.user.id;
     const { product_id } = req.body;
 
@@ -50,15 +58,34 @@ export const deleteCart=async(req,res)=>{
       return res.status(400).json({ message: "اطلاعات ناقص است" });
     }
 
-    const result = await pool.query(`
+    const result = await pool.query(
+      `
+       SELECT quantity FROM cart
+      WHERE user_id = $1 AND product_id = $2
+    `,
+      [userId, product_id]
+    );
+
+    if(result.rows.length === 0){
+      return res.status(404).json({message:'محصولی پیدا نشد'})
+    }
+    const quantity = result.rows[0].quantity
+      if (quantity > 1) {
+      const updated = await pool.query(`
+        UPDATE cart
+        SET quantity = quantity - 1
+        WHERE user_id = $1 AND product_id = $2
+      `, [userId, product_id])
+        return res.json({quantity:updated.rows[0].quantity})
+    }
+
+    await pool.query(`
       DELETE FROM cart
       WHERE user_id = $1 AND product_id = $2
-    `, [userId, product_id]);
-
-    res.status(200).json({ message: "محصول با موفقیت حذف شد" });
-
+    `, [userId, product_id])
+    return
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "خطا در حذف محصول" });
   }
-}
+};

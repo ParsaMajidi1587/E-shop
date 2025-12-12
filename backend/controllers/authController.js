@@ -7,7 +7,8 @@ import { sendEmailReset } from '../middleware/mail.js'
 import { pool } from '../db/database.js'
 export const authController = async (req,res)=>{
     
-    let{fullname , username , email, password} = req.body
+    let{fullname , username , email, password,role} = req.body
+    const savedRole = role || 'user'
     const existing = await pool.query('SELECT * FROM users WHERE email = $1 OR username =$2',[email,username])
     if(!fullname || !username || !email || !password){
        return res.status(400).json({message:'لطفا تمام فیلد هارا پر کنید'})
@@ -29,8 +30,8 @@ export const authController = async (req,res)=>{
     }
     try {
         const hashed = await bcrypt.hash(password , 10)
-        const result = await pool.query('INSERT INTO users(fullname,username,email,password)VALUES($1,$2,$3,$4) RETURNING *',
-            [fullname,username,email,hashed])
+        const result = await pool.query(`INSERT INTO users(fullname,username,email,password,role)VALUES($1,$2,$3,$4,$5  ) RETURNING *`,
+            [fullname,username,email,hashed,savedRole])
 
        let user = result.rows[0]
         req.session.user={
@@ -38,6 +39,8 @@ export const authController = async (req,res)=>{
             fullname: user.fullname,
             username: user.username,
             email: user.email,
+            avatar:user.avatar || null,
+            role:user.role 
         }
         req.session.save(() => {
         res.json({ success: 'با موفقیت ثبت نام شدید', user: req.session.user });
@@ -52,7 +55,7 @@ export const authController = async (req,res)=>{
 
 export const authLogin =async(req,res)=>{
     try{
-    const {email,password} = req.body
+    const {email,password , role} = req.body
 
     if(!email || !password){
         return res.status(400).json({message:"لطفا ایمیل و پسورد را وارد کنید"})
@@ -62,22 +65,23 @@ export const authLogin =async(req,res)=>{
        return res.status(400).json({message:"کاربر با اطلاعات مورد نظر یافت نشد"})
     }
     const user = result.rows[0]
-    console.log(user)
 
     const isMatch = await bcrypt.compare(password , user.password)
     if(!isMatch){
        return res.status(400).json({message:"رمز عبور اشتباه است"})
     }
-    console.log("isMatch:", isMatch);
 
      req.session.user = {
     id: user.id,
     fullname:user.fullname,
     username: user.username,
     email: user.email,
+    avatar:user.avatar,
+    role:user.role 
   };
+  console.log('loggedin',req.session.user);
+  
   req.session.save(() => {
-  console.log("SESSION AFTER LOGIN:", req.session);
   res.json({ success: "ورود با موفقیت انجام شد", user: req.session.user });
 });
 }
