@@ -52,6 +52,6 @@ server.use('/admin',adminRoutes)
 server.use("/", deleteRoute);
 server.use('/',trackViewsRoute)*/
 server.get("/", (req, res) => {
-  res.send("API is running");
+  res.status(200).send("OK");
 });
 server.listen(PORT, "0.0.0.0", () => console.log(`SERVER RUNNING ON PORT ${PORT}`));
