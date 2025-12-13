@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 8000;
 const server = express();
 server.use(
   cors({
-    origin: true,
+    origin: 'https://e-shop-flax-two.vercel.app/',
     credentials: true,
   })
 );
