@@ -17,7 +17,7 @@ import { trackViewsRoute } from './routes/trackViewsRoute.js';
 const PORT = process.env.PORT || 8000;
 
 const server = express();
-server.use(
+/*server.use(
   cors({
     //origin: "http://localhost:3000",
     origin: true,
@@ -26,7 +26,7 @@ server.use(
 );
 server.set("trust proxy", 1);
 
-server.use(
+/*server.use(
   session({
     secret: process.env.SECRET_KEY,
     resave: false,
@@ -39,7 +39,7 @@ server.use(
     },
   })
 );
-server.use(express.json());
+/*server.use(express.json());
 server.use("/products", productRoute);
 server.use("/cart", cartRouter);
 server.use("/", searchRoute);
@@ -50,7 +50,7 @@ server.use("/", meRouter);
 server.use('/',uploadRoute)
 server.use('/admin',adminRoutes)
 server.use("/", deleteRoute);
-server.use('/',trackViewsRoute)
+server.use('/',trackViewsRoute)*/
 server.get("/", (req, res) => {
   res.send("API is running");
 });
