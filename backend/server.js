@@ -17,7 +17,7 @@ import { trackViewsRoute } from './routes/trackViewsRoute.js';
 const PORT = process.env.PORT || 8000;
 
 const server = express();
-/*server.use(
+server.use(
   cors({
     //origin: "http://localhost:3000",
     origin: true,
