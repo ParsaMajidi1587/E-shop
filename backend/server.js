@@ -32,8 +32,8 @@ server.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: true,
+      sameSite: "none",
       maxAge: 1000 * 60 * 60 * 24,
     },
   })
