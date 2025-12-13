@@ -54,4 +54,4 @@ server.use('/',trackViewsRoute)*/
 server.get("/", (req, res) => {
   res.send("API is running");
 });
-server.listen(PORT, "0.0.0.0", () => console.log(`server is running`));
+server.listen(PORT, "0.0.0.0", () => console.log(`SERVER RUNNING ON PORT ${PORT}`));
