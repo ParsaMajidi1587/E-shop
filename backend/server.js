@@ -53,4 +53,4 @@ server.use('/',trackViewsRoute)
 server.get("/", (req, res) => {
   res.status(200).send("OK");
 });
-server.listen(PORT, "0.0.0.0", () => console.log(`SERVER RUNNING ON PORT ${PORT}`));
+server.listen(PORT, "0.0.0.0", () => console.log(`VER Y NEW SERVER RUNNING ON PORT ${PORT}`));
